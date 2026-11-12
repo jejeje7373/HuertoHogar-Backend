@@ -51,4 +51,10 @@ public class ModeloProducto {
     private String descripcion;
 
     private String imagen;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Long visualizaciones = 0L;
+
+    private String vendedorEmail;
 }

@@ -32,44 +32,44 @@ public class DataInitializer implements CommandLineRunner {
         List<ModeloProducto> iniciales = List.of(
             ModeloProducto.builder()
                 .codigo("FR001").nombre("Manzanas Fuji").categoria("Frutas Frescas")
-                .precio(1200).unidad("kilo").stock(150).atributo("Valle del Maule")
-                .descripcion("Manzanas Fuji crujientes y dulces, cultivadas en el Valle del Maule. Perfectas para meriendas saludables o reposteria natural.")
-                .imagen("assets/img/manzanas.svg").build(),
+                .precio(1200).unidad("kilo").stock(150).atributo("Valle de Aconcagua, San Felipe")
+                .descripcion("Manzanas Fuji crujientes y dulces, cultivadas en el Valle de Aconcagua (V Región). Perfectas para meriendas saludables o repostería natural.")
+                .imagen("assets/img/manzanas.svg").visualizaciones(420L).vendedorEmail("vendedor@huertohogar.cl").build(),
             ModeloProducto.builder()
                 .codigo("FR002").nombre("Naranjas Valencia").categoria("Frutas Frescas")
-                .precio(1000).unidad("kilo").stock(200).atributo("Ricas en Vitamina C")
-                .descripcion("Jugosas y aromaticas, estas naranjas Valencia son ideales para zumos frescos matutinos. Cosechadas en el punto optimo de madurez.")
-                .imagen("assets/img/naranjas.svg").build(),
+                .precio(1000).unidad("kilo").stock(200).atributo("Hijuelas, V Región")
+                .descripcion("Jugosas y aromáticas, estas naranjas Valencia cosechadas en Hijuelas son ideales para zumos frescos matutinos.")
+                .imagen("assets/img/naranjas.svg").visualizaciones(315L).vendedorEmail("vendedor@huertohogar.cl").build(),
             ModeloProducto.builder()
                 .codigo("FR003").nombre("Plátanos Cavendish").categoria("Frutas Frescas")
-                .precio(800).unidad("kilo").stock(250).atributo("Ricos en Potasio")
-                .descripcion("Platanos maduros y dulces, perfectos para el desayuno, batidos o como snack energetico para deportistas y ninos.")
-                .imagen("assets/img/platanos.svg").build(),
+                .precio(800).unidad("kilo").stock(250).atributo("Isla de Pascua, V Región")
+                .descripcion("Plátanos maduros y dulces de la V Región, perfectos para el desayuno, batidos o como snack energético para deportistas y niños.")
+                .imagen("assets/img/platanos.svg").visualizaciones(198L).vendedorEmail("vendedor@huertohogar.cl").build(),
             ModeloProducto.builder()
                 .codigo("VR001").nombre("Zanahorias Orgánicas").categoria("Verduras Orgánicas")
-                .precio(900).unidad("kilo").stock(100).atributo("Región de O'Higgins")
-                .descripcion("Zanahorias crujientes cultivadas sin pesticidas en los fertiles suelos de O'Higgins. Excelente fuente de betacarotenos y fibra.")
-                .imagen("assets/img/zanahorias.svg").build(),
+                .precio(900).unidad("kilo").stock(100).atributo("Limache, V Región")
+                .descripcion("Zanahorias crujientes cultivadas sin pesticidas en los fértiles suelos de Limache. Excelente fuente de betacarotenos y fibra.")
+                .imagen("assets/img/zanahorias.svg").visualizaciones(276L).vendedorEmail("vendedor@huertohogar.cl").build(),
             ModeloProducto.builder()
                 .codigo("VR002").nombre("Espinacas Frescas").categoria("Verduras Orgánicas")
-                .precio(700).unidad("bolsa 500g").stock(80).atributo("Cultivo Hidropónico")
-                .descripcion("Hojas tiernas y nutritivas de espinaca recien cosechada. Ideales para ensaladas crudas, salteados o batidos verdes detox.")
-                .imagen("assets/img/espinacas.svg").build(),
+                .precio(700).unidad("bolsa 500g").stock(80).atributo("Olmué, V Región")
+                .descripcion("Hojas tiernas y nutritivas de espinaca recién cosechada en Olmué. Ideales para ensaladas crudas, salteados o batidos verdes détox.")
+                .imagen("assets/img/espinacas.svg").visualizaciones(184L).vendedorEmail("vendedor@huertohogar.cl").build(),
             ModeloProducto.builder()
                 .codigo("VR003").nombre("Pimientos Tricolores").categoria("Verduras Orgánicas")
-                .precio(1500).unidad("malla 3 un.").stock(60).atributo("Invernaderos Solares")
-                .descripcion("Trio de pimientos rojo, amarillo y verde. Aportan color, textura crocante y alto contenido de antioxidantes a tus preparaciones.")
-                .imagen("assets/img/pimientos.svg").build(),
+                .precio(1500).unidad("malla 3 un.").stock(60).atributo("Quillota, V Región")
+                .descripcion("Trío de pimientos rojo, amarillo y verde cosechados en Quillota. Aportan color, textura crocante y alto contenido de antioxidantes.")
+                .imagen("assets/img/pimientos.svg").visualizaciones(249L).vendedorEmail("vendedor@huertohogar.cl").build(),
             ModeloProducto.builder()
                 .codigo("PO001").nombre("Miel Orgánica").categoria("Productos Orgánicos")
-                .precio(5000).unidad("frasco 500g").stock(45).atributo("Bosque Nativo del Sur")
-                .descripcion("Miel pura de abeja cosechada en apiarios sustentables del sur de Chile. 100% natural, sin aditivos ni azucares anadidos.")
-                .imagen("assets/img/miel.svg").build(),
+                .precio(5000).unidad("frasco 500g").stock(45).atributo("Casablanca, V Región")
+                .descripcion("Miel pura de abeja cosechada en apiarios sustentables del valle de Casablanca (V Región). 100% natural, sin aditivos ni azúcares añadidos.")
+                .imagen("assets/img/miel.svg").visualizaciones(512L).vendedorEmail("vendedor@huertohogar.cl").build(),
             ModeloProducto.builder()
                 .codigo("PO003").nombre("Quinua Orgánica").categoria("Productos Orgánicos")
-                .precio(3200).unidad("bolsa 1kg").stock(75).atributo("Grano Andino Ancestral")
-                .descripcion("Quinua real blanca prelavada de cultivo ecologico. Superalimento completo con los 9 aminoacidos esenciales, libre de gluten.")
-                .imagen("assets/img/quinua.svg").build()
+                .precio(3200).unidad("bolsa 1kg").stock(75).atributo("Petorca, V Región")
+                .descripcion("Quinua blanca prelavada de cultivo ecológico en Petorca (V Región). Superalimento completo con los 9 aminoácidos esenciales, libre de gluten.")
+                .imagen("assets/img/quinua.svg").visualizaciones(165L).vendedorEmail("vendedor@huertohogar.cl").build()
         );
         return repositorioProducto.saveAll(iniciales);
     }

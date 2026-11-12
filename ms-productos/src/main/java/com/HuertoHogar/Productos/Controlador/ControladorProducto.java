@@ -7,14 +7,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/products")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ControladorProducto {
 
@@ -30,14 +32,18 @@ public class ControladorProducto {
     public ResponseEntity<?> obtenerPorCodigo(@PathVariable String codigo) {
         try {
             return ResponseEntity.ok(servicioProducto.buscarPorCodigo(codigo));
-        } catch (IllegalArgumentException e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
 
     @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody ModeloProducto producto) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    public ResponseEntity<?> crear(@Valid @RequestBody ModeloProducto producto, Authentication authentication) {
         try {
+            if (authentication != null && (producto.getVendedorEmail() == null || producto.getVendedorEmail().isBlank())) {
+                producto.setVendedorEmail(authentication.getName());
+            }
             return ResponseEntity.status(HttpStatus.CREATED).body(servicioProducto.crearProducto(producto));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -45,11 +51,23 @@ public class ControladorProducto {
     }
 
     @PutMapping("/{codigo}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<?> actualizar(@PathVariable String codigo, @Valid @RequestBody ModeloProducto producto) {
         try {
             return ResponseEntity.ok(servicioProducto.actualizarProducto(codigo, producto));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{codigo}/visualizacion")
+    public ResponseEntity<?> registrarVisualizacion(@PathVariable String codigo) {
+        try {
+            return ResponseEntity.ok(servicioProducto.registrarVisualizacion(codigo));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
 
@@ -58,22 +76,26 @@ public class ControladorProducto {
         try {
             Integer cantidad = body.getOrDefault("cantidad", 1);
             return ResponseEntity.ok(servicioProducto.descontarStock(codigo, cantidad));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
     @DeleteMapping("/{codigo}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> eliminar(@PathVariable String codigo) {
         try {
             servicioProducto.eliminarProducto(codigo);
             return ResponseEntity.noContent().build();
-        } catch (IllegalArgumentException e) {
+        } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
         }
     }
 
     @PostMapping("/reset")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<ModeloProducto>> restaurarCatalogo() {
         return ResponseEntity.ok(dataInitializer.restaurarCatalogoOriginal());
     }

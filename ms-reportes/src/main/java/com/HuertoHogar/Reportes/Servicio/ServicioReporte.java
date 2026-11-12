@@ -4,6 +4,10 @@ import com.HuertoHogar.Reportes.Modelo.ModeloReporte;
 import com.HuertoHogar.Reportes.Repositorio.RepositorioReporte;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -25,15 +29,20 @@ public class ServicioReporte {
     @Value("${ms.productos.url:http://localhost:8083/api/products}")
     private String msProductosUrl;
 
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> obtenerDatosGraficosDashboard() {
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Map<String, Object> obtenerDatosGraficosDashboard(String authHeader) {
         List<Map<String, Object>> ordenes = new ArrayList<>();
         List<Map<String, Object>> productos = new ArrayList<>();
 
         try {
-            Map<String, Object>[] respOrdenes = restTemplate.getForObject(msVentasUrl, Map[].class);
-            if (respOrdenes != null) {
-                ordenes = Arrays.asList(respOrdenes);
+            HttpHeaders headers = new HttpHeaders();
+            if (authHeader != null && !authHeader.isBlank()) {
+                headers.set("Authorization", authHeader);
+            }
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+            ResponseEntity<Map[]> respOrdenes = restTemplate.exchange(msVentasUrl, HttpMethod.GET, entity, Map[].class);
+            if (respOrdenes.getBody() != null) {
+                ordenes = Arrays.asList(respOrdenes.getBody());
             }
         } catch (Exception ignored) {
         }
@@ -48,10 +57,23 @@ public class ServicioReporte {
 
         Map<String, String> categoriaPorCodigo = new HashMap<>();
         Map<String, Integer> stockActualPorCodigo = new HashMap<>();
+        long totalVisualizaciones = 0L;
+        String productoMasVisto = "Sin visualizaciones";
+        long maxVistas = -1L;
+
         for (Map<String, Object> prod : productos) {
             String cod = (String) prod.get("codigo");
-            categoriaPorCodigo.put(cod, (String) prod.getOrDefault("categoria", "Sin Categoria"));
-            stockActualPorCodigo.put(cod, (Integer) prod.getOrDefault("stock", 0));
+            categoriaPorCodigo.put(cod, (String) prod.getOrDefault("categoria", "Sin Categoría"));
+            Object stockObj = prod.get("stock");
+            stockActualPorCodigo.put(cod, stockObj instanceof Number n ? n.intValue() : 0);
+
+            Object visObj = prod.get("visualizaciones");
+            long vistas = visObj instanceof Number n ? n.longValue() : 0L;
+            totalVisualizaciones += vistas;
+            if (vistas > maxVistas) {
+                maxVistas = vistas;
+                productoMasVisto = prod.getOrDefault("nombre", cod) + " (" + vistas + " vistas)";
+            }
         }
 
         int totalIngresos = 0;
@@ -98,11 +120,37 @@ public class ServicioReporte {
             }
         }
 
+        List<Map<String, Object>> detalleProductos = new ArrayList<>();
+        for (Map<String, Object> prod : productos) {
+            String cod = (String) prod.get("codigo");
+            Map<String, Object> ventaInfo = ventasPorProducto.getOrDefault(cod, Map.of());
+            int cantVendida = ventaInfo.get("cantidadVendida") instanceof Number n ? n.intValue() : 0;
+            int ingresosProd = ventaInfo.get("ingresos") instanceof Number n ? n.intValue() : 0;
+            long vistas = prod.get("visualizaciones") instanceof Number n ? n.longValue() : 0L;
+            double conversion = vistas > 0 ? Math.round((cantVendida * 10000.0) / vistas) / 100.0 : 0.0;
+
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("codigo", cod);
+            row.put("nombre", prod.getOrDefault("nombre", cod));
+            row.put("categoria", prod.getOrDefault("categoria", "Sin Categoría"));
+            row.put("origen", prod.getOrDefault("atributo", "V Región"));
+            row.put("precio", prod.getOrDefault("precio", 0));
+            row.put("stockActual", prod.getOrDefault("stock", 0));
+            row.put("visualizaciones", vistas);
+            row.put("cantidadVendida", cantVendida);
+            row.put("ingresos", ingresosProd);
+            row.put("tasaConversion", conversion);
+            detalleProductos.add(row);
+        }
+
         Map<String, Object> dashboard = new HashMap<>();
         dashboard.put("totalIngresos", totalIngresos);
         dashboard.put("totalOrdenes", ordenes.size());
         dashboard.put("totalUnidadesVendidas", totalUnidadesVendidas);
+        dashboard.put("totalVisualizaciones", totalVisualizaciones);
+        dashboard.put("productoMasVisto", productoMasVisto);
         dashboard.put("ventasPorProducto", new ArrayList<>(ventasPorProducto.values()));
+        dashboard.put("detalleProductos", detalleProductos);
         dashboard.put("ingresosPorCategoria", ingresosPorCategoria);
         dashboard.put("ingresosPorFecha", ingresosPorFecha);
         return dashboard;
@@ -114,13 +162,13 @@ public class ServicioReporte {
 
     public ModeloReporte buscarPorId(Long id) {
         return repositorioReporte.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Reporte no encontrado con ID: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Reporte no encontrado con ID: " + id));
     }
 
     @Transactional
     @SuppressWarnings("unchecked")
-    public ModeloReporte generarYGuardarReporte(ModeloReporte solicitud) {
-        Map<String, Object> stats = obtenerDatosGraficosDashboard();
+    public ModeloReporte generarYGuardarReporte(ModeloReporte solicitud, String authHeader) {
+        Map<String, Object> stats = obtenerDatosGraficosDashboard(authHeader);
         List<Map<String, Object>> porProducto = (List<Map<String, Object>>) stats.get("ventasPorProducto");
 
         String topProducto = "Sin ventas registradas";

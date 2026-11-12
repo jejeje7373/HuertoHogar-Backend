@@ -1,5 +1,6 @@
 package com.HuertoHogar.Usuarios.Modelo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,7 +29,7 @@ public class ModeloUsuario {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @NotBlank(message = "La contrasena es obligatoria")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     private String rut;
@@ -38,18 +39,44 @@ public class ModeloUsuario {
 
     @Column(nullable = false)
     @Builder.Default
-    private String role = "cliente";
+    private String role = "CLIENTE";
 
+    @Column(nullable = false)
     @Builder.Default
-    private boolean activo = true;
+    private Boolean activo = true;
 
     public String getRol() {
-        return this.role;
+        return normalizarRol(this.role);
     }
 
     public void setRol(String rol) {
         if (rol != null && !rol.isBlank()) {
-            this.role = rol;
+            this.role = normalizarRol(rol);
         }
+    }
+
+    public String getRole() {
+        return normalizarRol(this.role);
+    }
+
+    public void setRole(String role) {
+        if (role != null && !role.isBlank()) {
+            this.role = normalizarRol(role);
+        }
+    }
+
+    public boolean isActivo() {
+        return this.activo == null || this.activo;
+    }
+
+    public static String normalizarRol(String r) {
+        if (r == null || r.isBlank()) return "CLIENTE";
+        String upper = r.trim().toUpperCase();
+        if (upper.startsWith("ROLE_")) {
+            upper = upper.substring(5);
+        }
+        if (upper.equals("ADMIN")) return "ADMIN";
+        if (upper.equals("VENDEDOR")) return "VENDEDOR";
+        return "CLIENTE";
     }
 }

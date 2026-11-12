@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -20,13 +21,13 @@ public class ServicioCategoria {
 
     public ModeloCategoria buscarPorId(Long id) {
         return repositorioCategoria.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Categoria no encontrada con ID: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Categoría no encontrada con ID: " + id));
     }
 
     @Transactional
     public ModeloCategoria crear(ModeloCategoria categoria) {
         if (repositorioCategoria.existsByNombre(categoria.getNombre())) {
-            throw new IllegalArgumentException("La categoria ya existe: " + categoria.getNombre());
+            throw new IllegalArgumentException("La categoría ya existe: " + categoria.getNombre());
         }
         return repositorioCategoria.save(categoria);
     }

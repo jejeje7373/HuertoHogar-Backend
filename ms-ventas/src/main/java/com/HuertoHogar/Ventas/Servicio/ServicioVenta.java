@@ -5,6 +5,10 @@ import com.HuertoHogar.Ventas.Modelo.ModeloVentaDetalle;
 import com.HuertoHogar.Ventas.Repositorio.RepositorioVenta;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
@@ -29,20 +33,27 @@ public class ServicioVenta {
 
     public ModeloVenta buscarPorId(Long id) {
         return repositorioVenta.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Venta no encontrada con ID: " + id));
+                .orElseThrow(() -> new NoSuchElementException("Venta no encontrada con ID: " + id));
     }
 
     @Transactional
     @SuppressWarnings("unchecked")
-    public ModeloVenta crearVenta(ModeloVenta venta) {
+    public ModeloVenta crearVenta(ModeloVenta venta, String authHeader) {
         int subtotal = 0;
         if (venta.getDetalles() == null || venta.getDetalles().isEmpty()) {
             throw new IllegalArgumentException("La orden debe incluir al menos un producto.");
         }
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        if (authHeader != null && !authHeader.isBlank()) {
+            headers.set("Authorization", authHeader);
+        }
+
         for (ModeloVentaDetalle detalle : venta.getDetalles()) {
             String urlDescuento = msProductosUrl + "/" + detalle.getCodigoProducto() + "/descontar-stock";
-            restTemplate.put(urlDescuento, Map.of("cantidad", detalle.getCantidad()));
+            HttpEntity<Map<String, Integer>> entityPut = new HttpEntity<>(Map.of("cantidad", detalle.getCantidad()), headers);
+            restTemplate.exchange(urlDescuento, HttpMethod.PUT, entityPut, Map.class);
 
             String urlProducto = msProductosUrl + "/" + detalle.getCodigoProducto();
             Map<String, Object> prod = restTemplate.getForObject(urlProducto, Map.class);
