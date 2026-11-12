@@ -16,10 +16,10 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        List<String> categorias = List.of("Frutas Frescas", "Verduras Organicas", "Productos Organicos");
+        List<String> categorias = List.of("Frutas Frescas", "Verduras Orgánicas", "Productos Orgánicos");
         for (String nombre : categorias) {
             if (!repositorioCategoria.existsByNombre(nombre)) {
-                repositorioCategoria.save(new ModeloCategoria(null, nombre, "Categoria oficial HuertoHogar"));
+                repositorioCategoria.save(new ModeloCategoria(null, nombre, "Categoría oficial HuertoHogar"));
             }
         }
     }

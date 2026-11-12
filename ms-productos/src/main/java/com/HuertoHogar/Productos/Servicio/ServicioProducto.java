@@ -34,7 +34,7 @@ public class ServicioProducto {
         }
         producto.setCodigo(codigoNorm);
         if (producto.getImagen() == null || producto.getImagen().isBlank()) {
-            producto.setImagen("/assets/img/manzanas-fuji.jpg");
+            producto.setImagen("assets/img/manzanas.svg");
         }
         return repositorioProducto.save(producto);
     }

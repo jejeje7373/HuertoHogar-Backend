@@ -34,9 +34,22 @@ public class ModeloUsuario {
     private String rut;
     private String region;
     private String comuna;
+    private String direccion;
 
     @Column(nullable = false)
+    @Builder.Default
     private String role = "cliente";
 
+    @Builder.Default
     private boolean activo = true;
+
+    public String getRol() {
+        return this.role;
+    }
+
+    public void setRol(String rol) {
+        if (rol != null && !rol.isBlank()) {
+            this.role = rol;
+        }
+    }
 }

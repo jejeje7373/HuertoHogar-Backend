@@ -33,43 +33,43 @@ public class DataInitializer implements CommandLineRunner {
             ModeloProducto.builder()
                 .codigo("FR001").nombre("Manzanas Fuji").categoria("Frutas Frescas")
                 .precio(1200).unidad("kilo").stock(150).atributo("Valle del Maule")
-                .descripcion("Manzanas Fuji crujientes y dulces, cultivadas en el Valle del Maule.")
-                .imagen("/assets/img/manzanas-fuji.jpg").build(),
+                .descripcion("Manzanas Fuji crujientes y dulces, cultivadas en el Valle del Maule. Perfectas para meriendas saludables o reposteria natural.")
+                .imagen("assets/img/manzanas.svg").build(),
             ModeloProducto.builder()
                 .codigo("FR002").nombre("Naranjas Valencia").categoria("Frutas Frescas")
-                .precio(1000).unidad("kilo").stock(200).atributo("Alto en Vitamina C")
-                .descripcion("Jugosas y ricas en vitamina C, ideales para zumos frescos y naturales.")
-                .imagen("/assets/img/naranjas-valencia.jpg").build(),
+                .precio(1000).unidad("kilo").stock(200).atributo("Ricas en Vitamina C")
+                .descripcion("Jugosas y aromaticas, estas naranjas Valencia son ideales para zumos frescos matutinos. Cosechadas en el punto optimo de madurez.")
+                .imagen("assets/img/naranjas.svg").build(),
             ModeloProducto.builder()
-                .codigo("FR003").nombre("Platanos Cavendish").categoria("Frutas Frescas")
-                .precio(800).unidad("kilo").stock(250).atributo("Rico en Potasio")
-                .descripcion("Platanos maduros y dulces, perfectos para el desayuno o como snack energetico.")
-                .imagen("/assets/img/platanos-cavendish.jpg").build(),
+                .codigo("FR003").nombre("Plátanos Cavendish").categoria("Frutas Frescas")
+                .precio(800).unidad("kilo").stock(250).atributo("Ricos en Potasio")
+                .descripcion("Platanos maduros y dulces, perfectos para el desayuno, batidos o como snack energetico para deportistas y ninos.")
+                .imagen("assets/img/platanos.svg").build(),
             ModeloProducto.builder()
-                .codigo("VR001").nombre("Zanahorias Organicas").categoria("Verduras Organicas")
-                .precio(900).unidad("kilo").stock(100).atributo("Region de O'Higgins")
-                .descripcion("Zanahorias crujientes cultivadas sin pesticidas en la Region de O'Higgins.")
-                .imagen("/assets/img/zanahorias-organicas.jpg").build(),
+                .codigo("VR001").nombre("Zanahorias Orgánicas").categoria("Verduras Orgánicas")
+                .precio(900).unidad("kilo").stock(100).atributo("Región de O'Higgins")
+                .descripcion("Zanahorias crujientes cultivadas sin pesticidas en los fertiles suelos de O'Higgins. Excelente fuente de betacarotenos y fibra.")
+                .imagen("assets/img/zanahorias.svg").build(),
             ModeloProducto.builder()
-                .codigo("VR002").nombre("Espinacas Frescas").categoria("Verduras Organicas")
-                .precio(700).unidad("bolsa 500g").stock(80).atributo("Cosecha del Dia")
-                .descripcion("Espinacas frescas y nutritivas, perfectas para ensaladas y batidos verdes.")
-                .imagen("/assets/img/espinacas-frescas.jpg").build(),
+                .codigo("VR002").nombre("Espinacas Frescas").categoria("Verduras Orgánicas")
+                .precio(700).unidad("bolsa 500g").stock(80).atributo("Cultivo Hidropónico")
+                .descripcion("Hojas tiernas y nutritivas de espinaca recien cosechada. Ideales para ensaladas crudas, salteados o batidos verdes detox.")
+                .imagen("assets/img/espinacas.svg").build(),
             ModeloProducto.builder()
-                .codigo("VR003").nombre("Pimientos Tricolores").categoria("Verduras Organicas")
-                .precio(1500).unidad("malla 3 un.").stock(60).atributo("Rico en Antioxidantes")
-                .descripcion("Pimientos rojos, amarillos y verdes, ideales para salteados y platos coloridos.")
-                .imagen("/assets/img/pimientos-tricolores.jpg").build(),
+                .codigo("VR003").nombre("Pimientos Tricolores").categoria("Verduras Orgánicas")
+                .precio(1500).unidad("malla 3 un.").stock(60).atributo("Invernaderos Solares")
+                .descripcion("Trio de pimientos rojo, amarillo y verde. Aportan color, textura crocante y alto contenido de antioxidantes a tus preparaciones.")
+                .imagen("assets/img/pimientos.svg").build(),
             ModeloProducto.builder()
-                .codigo("PO001").nombre("Miel Organica").categoria("Productos Organicos")
-                .precio(5000).unidad("frasco 500g").stock(45).atributo("100% Pura de Abeja")
-                .descripcion("Miel pura y organica producida por apicultores locales.")
-                .imagen("/assets/img/miel-organica.jpg").build(),
+                .codigo("PO001").nombre("Miel Orgánica").categoria("Productos Orgánicos")
+                .precio(5000).unidad("frasco 500g").stock(45).atributo("Bosque Nativo del Sur")
+                .descripcion("Miel pura de abeja cosechada en apiarios sustentables del sur de Chile. 100% natural, sin aditivos ni azucares anadidos.")
+                .imagen("assets/img/miel.svg").build(),
             ModeloProducto.builder()
-                .codigo("PO003").nombre("Quinua Organica").categoria("Productos Organicos")
-                .precio(3200).unidad("bolsa 1kg").stock(75).atributo("Superalimento Andino")
-                .descripcion("Grano andino rico en proteinas, fibra y minerales esenciales.")
-                .imagen("/assets/img/quinua-organica.jpg").build()
+                .codigo("PO003").nombre("Quinua Orgánica").categoria("Productos Orgánicos")
+                .precio(3200).unidad("bolsa 1kg").stock(75).atributo("Grano Andino Ancestral")
+                .descripcion("Quinua real blanca prelavada de cultivo ecologico. Superalimento completo con los 9 aminoacidos esenciales, libre de gluten.")
+                .imagen("assets/img/quinua.svg").build()
         );
         return repositorioProducto.saveAll(iniciales);
     }

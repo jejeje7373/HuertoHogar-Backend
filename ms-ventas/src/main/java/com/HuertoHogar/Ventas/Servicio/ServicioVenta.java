@@ -57,8 +57,9 @@ public class ServicioVenta {
 
         int descPorcentaje = venta.getDescuentoPorcentaje() != null ? venta.getDescuentoPorcentaje() : 0;
         int descuentoMonto = Math.round(subtotal * (descPorcentaje / 100.0f));
+        int costoEnvio = (subtotal >= 20000 || subtotal == 0) ? 0 : 2500;
         venta.setSubtotal(subtotal);
-        venta.setTotal(Math.max(0, subtotal - descuentoMonto));
+        venta.setTotal(Math.max(0, subtotal - descuentoMonto + costoEnvio));
         venta.setFecha(LocalDateTime.now());
         if (venta.getEstado() == null || venta.getEstado().isBlank()) {
             venta.setEstado("CONFIRMADA");
