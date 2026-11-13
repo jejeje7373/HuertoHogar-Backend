@@ -1,12 +1,15 @@
 package com.HuertoHogar.Reportes.Controlador;
 
 import com.HuertoHogar.Reportes.Modelo.ModeloReporte;
+import com.HuertoHogar.Reportes.Modelo.ModeloReporteProducto;
 import com.HuertoHogar.Reportes.Servicio.ServicioReporte;
+import com.HuertoHogar.Reportes.Servicio.ServicioReporteProducto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +22,49 @@ import java.util.NoSuchElementException;
 public class ControladorReporte {
 
     private final ServicioReporte servicioReporte;
+    private final ServicioReporteProducto servicioReporteProducto;
+
+    @PostMapping("/productos")
+    public ResponseEntity<ModeloReporteProducto> reportarProductoMalEstado(
+            @Valid @RequestBody ModeloReporteProducto solicitud,
+            Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()
+                && (solicitud.getReportadoPor() == null || solicitud.getReportadoPor().isBlank())) {
+            solicitud.setReportadoPor(authentication.getName());
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(servicioReporteProducto.crearReporte(solicitud));
+    }
+
+    @GetMapping("/productos")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    public ResponseEntity<List<ModeloReporteProducto>> listarReportesProductos() {
+        return ResponseEntity.ok(servicioReporteProducto.listarReportes());
+    }
+
+    @PatchMapping("/productos/{id}/estado")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> actualizarEstadoReporteProducto(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+        try {
+            return ResponseEntity.ok(servicioReporteProducto.actualizarEstado(id, body.get("estado")));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/productos/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> eliminarReporteProducto(@PathVariable Long id) {
+        try {
+            servicioReporteProducto.eliminarReporte(id);
+            return ResponseEntity.noContent().build();
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
 
     @GetMapping("/dashboard")
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
